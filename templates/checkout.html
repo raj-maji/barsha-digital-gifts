@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout - Barsha Digital Gift{% endblock %}
+
+{% block content %}
+<div class="bg-light py-4 border-bottom">
+    <div class="container">
+        <h1 class="h3 fw-bold mb-1"><i class="bi bi-shield-check text-primary me-2"></i>Checkout &amp; Delivery</h1>
+        <p class="text-muted small mb-0">Enter your shipping details and select your preferred payment mode</p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <form action="{{ url_for('checkout') }}" method="POST">
+        <div class="row g-5">
+            <!-- Left: Delivery Address & Details -->
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2">
+                        <i class="bi bi-geo-alt text-primary me-2"></i>1. Shipping &amp; Contact Details
+                    </h5>
+
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label class="form-label small fw-bold">Full Name *</label>
+                            <input type="text" name="name" class="form-control" value="{{ user.name if user else '' }}" required placeholder="e.g. Joydeep Sen">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Mobile Number (WhatsApp) *</label>
+                            <input type="tel" name="phone" class="form-control" value="{{ user.phone if user else '' }}" required placeholder="10-digit mobile number">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Email Address *</label>
+                            <input type="email" name="email" class="form-control" value="{{ user.email if user else '' }}" required placeholder="name@domain.com">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Street Address / Village / Para *</label>
+                            <textarea name="address" class="form-control" rows="2" required placeholder="House/Flat No, Landmark, Road name">{{ user.address if user else '' }}</textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">City / Town *</label>
+                            <input type="text" name="city" class="form-control" value="{{ user.city if user else 'Kolaghat' }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Pincode *</label>
+                            <input type="text" name="pincode" class="form-control" value="{{ user.pincode if user else '721134' }}" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Special Delivery Notes (Optional)</label>
+                            <input type="text" name="order_notes" class="form-control" placeholder="e.g. Call before delivery, deliver in evening">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Method Selection -->
+                <div class="card border-0 shadow-sm rounded-4 p-4">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2">
+                        <i class="bi bi-cash-stack text-success me-2"></i>2. Payment Method
+                    </h5>
+
+                    <input type="hidden" name="payment_method" value="cod">
+
+                    <div class="p-3 border rounded-3 bg-light border-success border-opacity-50">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="rounded-circle bg-success bg-opacity-10 text-success p-3 fs-3">
+                                <i class="bi bi-cash-coin"></i>
+                            </div>
+                            <div>
+                                <div class="d-flex align-items-center gap-2 flex-wrap">
+                                    <h6 class="fw-bold mb-0 text-dark">Cash on Delivery (COD) / Pay at Shop</h6>
+                                    <span class="badge bg-success">Standard &bull; No Online Payment Required</span>
+                                </div>
+                                <p class="text-muted small mb-0 mt-1">
+                                    Pay with cash when your customized gifts are delivered to your doorstep or when collecting in person from our Sahapur, Kolaghat shop.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Order Summary -->
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm rounded-4 p-4 sticky-top" style="top: 100px;">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2">Order Review</h5>
+                    
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Items Subtotal:</span>
+                        <span class="fw-semibold">{{ subtotal|currency }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Delivery Charges:</span>
+                        <span class="fw-semibold">
+                            {% if delivery_fee == 0 %}
+                                <span class="text-success">FREE</span>
+                            {% else %}
+                                {{ delivery_fee|currency }}
+                            {% endif %}
+                        </span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="fs-5 fw-bold">Total Amount to Pay:</span>
+                        <span class="fs-3 fw-extrabold text-primary">{{ total_amount|currency }}</span>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100 py-3 fw-bold rounded-pill shadow">
+                        <i class="bi bi-check-circle-fill me-2"></i> Confirm &amp; Place Order (Cash on Delivery)
+                    </button>
+
+                    <div class="mt-4 p-3 bg-light rounded-3 small text-secondary">
+                        <div class="fw-bold text-dark mb-1"><i class="bi bi-shop me-1 text-primary"></i> Barsha Digital Gift Assurance</div>
+                        <div>Your customized printing begins right after order confirmation. You can also directly reach us at <strong>8513010387</strong> anytime.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

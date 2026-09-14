@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}UPI Payment - Order #{{ order.order_number }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="bg-primary text-white p-4 text-center">
+                    <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold mb-2">0% EXTRA FEE</span>
+                    <h3 class="fw-bold mb-1">Scan &amp; Pay via Any UPI App</h3>
+                    <p class="text-white-50 small mb-0">Google Pay, PhonePe, Paytm, BHIM, Amazon Pay or Any Bank App</p>
+                </div>
+
+                <div class="card-body p-4 p-md-5 text-center">
+                    <!-- Amount Highlight -->
+                    <div class="mb-4">
+                        <small class="text-muted d-block uppercase fw-semibold">Total Payable Amount</small>
+                        <span class="display-5 fw-extrabold text-primary">{{ order.total_amount|currency }}</span>
+                        <div class="text-muted small mt-1">Order Ref: <strong>#{{ order.order_number }}</strong></div>
+                    </div>
+
+                    <!-- Dynamic QR Code Container -->
+                    <div class="d-inline-block p-3 bg-white border-2 border-primary border rounded-4 shadow-sm mb-4">
+                        <img src="{{ upi_info.qr_code_url }}" alt="UPI QR Code" class="img-fluid" style="width: 220px; height: 220px;">
+                        <div class="small fw-bold text-dark mt-2">
+                            <i class="bi bi-qr-code-scan text-primary me-1"></i> Scan with any UPI app
+                        </div>
+                    </div>
+
+                    <!-- Direct UPI Open Link (For Mobile Users) -->
+                    <div class="d-block d-md-none mb-4">
+                        <a href="{{ upi_info.upi_url }}" class="btn btn-primary-custom w-100 py-3 fw-bold">
+                            <i class="bi bi-phone me-2"></i> Tap to Pay via UPI App
+                        </a>
+                    </div>
+
+                    <!-- UPI ID Display & Copy -->
+                    <div class="p-3 bg-light rounded-3 mb-4 d-flex justify-content-between align-items-center">
+                        <div class="text-start">
+                            <small class="text-muted d-block">Barsha Digital Gift Official UPI ID:</small>
+                            <span class="font-monospace fw-bold text-dark fs-6">{{ upi_info.upi_id }}</span>
+                        </div>
+                        <button type="button" id="btn_copy_upi" class="btn btn-sm btn-outline-primary rounded-pill px-3" data-upi="{{ upi_info.upi_id }}">
+                            <i class="bi bi-clipboard me-1"></i> Copy UPI ID
+                        </button>
+                    </div>
+
+                    <!-- Step 2: Confirm Payment by Entering UTR / Ref No -->
+                    <div class="card border rounded-3 p-4 text-start bg-light">
+                        <h6 class="fw-bold mb-3 text-dark">
+                            <i class="bi bi-check2-circle text-success me-2"></i>After Paying, Enter Details Below:
+                        </h6>
+
+                        <form action="{{ url_for('pay_upi', order_number=order.order_number) }}" method="POST" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">UPI 12-Digit UTR / Transaction Reference Number *</label>
+                                <input type="text" name="upi_utr" class="form-control font-monospace" placeholder="e.g. 423589123456" required>
+                                <div class="form-text small">You can find this 12-digit UTR in your Google Pay, PhonePe, or Paytm receipt.</div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label small fw-bold">Upload Payment Screenshot (Optional)</label>
+                                <input type="file" name="upi_screenshot" class="form-control" accept="image/*">
+                            </div>
+
+                            <button type="submit" class="btn btn-success btn-lg w-100 fw-bold rounded-pill shadow-sm">
+                                <i class="bi bi-check-lg me-1"></i> Confirm &amp; Submit Payment
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="mt-4 text-muted small">
+                        Need assistance? Call us directly: <a href="tel:{{ shop_phone_1 }}" class="fw-bold text-decoration-none">{{ shop_phone_1 }}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

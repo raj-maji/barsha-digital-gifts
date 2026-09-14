@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Order Confirmed #{{ order.order_number }} - Barsha Digital Gift{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Success Card -->
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden mb-4">
+                <div class="bg-success text-white p-4 text-center">
+                    <div class="rounded-circle bg-white text-success d-inline-flex align-items-center justify-content-center mb-3 shadow-sm" style="width: 70px; height: 70px;">
+                        <i class="bi bi-check-lg fs-1"></i>
+                    </div>
+                    <h2 class="fw-extrabold mb-1">🎉 Order Placed Successfully!</h2>
+                    <h5 class="fw-bold mb-1">Payment Method: Cash on Delivery (COD)</h5>
+                    <p class="text-white-50 small mb-0">Pay with cash when collecting from our Sahapur shop or upon doorstep delivery</p>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    <!-- Order Reference & Payment Mode Box -->
+                    <div class="p-3 bg-light border rounded-3 mb-4">
+                        <div class="row align-items-center g-2">
+                            <div class="col-sm-7">
+                                <small class="text-muted fw-bold d-block mb-1">
+                                    <i class="bi bi-cash-stack text-success me-1"></i> PAYMENT METHOD:
+                                </small>
+                                <span class="fs-5 fw-bold text-dark">
+                                    Cash on Delivery (COD)
+                                </span>
+                                <div class="small text-muted mt-1">Amount to pay upon receipt: <strong class="text-success">{{ order.total_amount|currency }}</strong></div>
+                            </div>
+                            <div class="col-sm-5 text-sm-end">
+                                <small class="text-muted d-block">Order Reference:</small>
+                                <span class="fw-bold font-monospace fs-5 text-primary">#{{ order.order_number }}</span>
+                                <div class="mt-1">
+                                    <span class="badge bg-success">Order Confirmed</span>
+                                    <span class="badge bg-secondary ms-1">Cash on Delivery</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ordered Items List -->
+                    <h5 class="fw-bold mb-3 border-bottom pb-2">Customized Items</h5>
+                    <div class="list-group mb-4">
+                        {% for item in order.items %}
+                        <div class="list-group-item border-0 p-3 mb-2 bg-light rounded-3">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="fw-bold mb-1">{{ item.product_name }} &times; {{ item.quantity }}</h6>
+                                    {% if item.custom_text %}
+                                    <div class="small text-primary">
+                                        <i class="bi bi-fonts"></i> Custom Text: <strong>"{{ item.custom_text }}"</strong>
+                                    </div>
+                                    {% endif %}
+                                    {% if item.custom_image %}
+                                    <div class="small text-success mt-1">
+                                        <i class="bi bi-image"></i> Uploaded Photo: 
+                                        <a href="{{ item.custom_image }}" target="_blank" class="text-decoration-underline fw-semibold">View Print File</a>
+                                    </div>
+                                    {% endif %}
+                                    {% if item.custom_instructions %}
+                                    <div class="small text-muted mt-1">
+                                        <i class="bi bi-info-circle"></i> Notes: {{ item.custom_instructions }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <span class="fw-bold text-primary">{{ item.subtotal|currency }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Delivery & Billing Details -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded-3 h-100">
+                                <h6 class="fw-bold text-dark mb-2"><i class="bi bi-geo-alt text-primary me-1"></i> Delivery Address</h6>
+                                <p class="mb-1 fw-semibold">{{ order.customer_name }}</p>
+                                <p class="small text-muted mb-1">{{ order.delivery_address }}</p>
+                                <p class="small text-muted mb-0">{{ order.city }}, West Bengal - {{ order.pincode }}</p>
+                                <p class="small text-muted mb-0"><i class="bi bi-telephone"></i> {{ order.customer_phone }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded-3 h-100">
+                                <h6 class="fw-bold text-dark mb-2"><i class="bi bi-cash-stack text-success me-1"></i> Payment Summary</h6>
+                                <div class="d-flex justify-content-between small mb-1">
+                                    <span class="text-muted">Payment Mode:</span>
+                                    <span class="fw-bold">Cash on Delivery (COD)</span>
+                                </div>
+                                <div class="d-flex justify-content-between small mb-1">
+                                    <span class="text-muted">Payment Status:</span>
+                                    <span class="badge {% if order.payment_status == 'Paid' %}bg-success{% else %}bg-warning text-dark{% endif %}">
+                                        {% if order.payment_status == 'Paid' %}Paid (Cash Collected){% else %}Pay on Delivery / Pickup{% endif %}
+                                    </span>
+                                </div>
+                                <hr class="my-2">
+                                <div class="d-flex justify-content-between fw-bold">
+                                    <span>Total Cash to Pay:</span>
+                                    <span class="text-primary fs-5">{{ order.total_amount|currency }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex flex-wrap gap-3 justify-content-center">
+                        <!-- Direct WhatsApp notify button -->
+                        {% set wa_msg = "Hello Barsha Digital Gift, I have placed order #" ~ order.order_number ~ " for " ~ order.total_amount|currency ~ ". Customer: " ~ order.customer_name ~ " (" ~ order.customer_phone ~ ")." %}
+                        <a href="https://wa.me/91{{ shop_phone_1 }}?text={{ wa_msg|urlencode }}" target="_blank" class="btn btn-whatsapp rounded-pill px-4">
+                            <i class="bi bi-whatsapp me-2"></i> Send Details on WhatsApp
+                        </a>
+
+                        <button onclick="window.print();" class="btn btn-outline-secondary rounded-pill px-4">
+                            <i class="bi bi-printer me-2"></i> Print Invoice
+                        </button>
+
+                        <a href="{{ url_for('products') }}" class="btn btn-outline-primary rounded-pill px-4">
+                            <i class="bi bi-gift me-2"></i> Continue Shopping
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

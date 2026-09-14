@@ -1,0 +1,64 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Shop Timing & Settings - Admin Barsha Digital Gifts{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-3 mb-4 border-bottom">
+    <div>
+        <h1 class="h3 fw-bold mb-1"><i class="bi bi-clock-history text-primary me-2"></i>Shop Timing &amp; Store Settings</h1>
+        <p class="text-muted small mb-0">Update your store opening &amp; closing hours, which appear on the website header and footer</p>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+            <h5 class="fw-bold mb-4 border-bottom pb-3">
+                <i class="bi bi-shop text-primary me-2"></i>Store Operating Hours
+            </h5>
+
+            <form action="{{ url_for('admin_settings') }}" method="POST">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold small text-dark">
+                            <i class="bi bi-sun-fill text-warning me-1"></i> Opening Time *
+                        </label>
+                        <input type="text" name="opening_time" class="form-control form-control-lg" value="{{ opening_time }}" placeholder="e.g. 8:00 AM" required>
+                        <div class="form-text small">e.g., <strong>8:00 AM</strong></div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold small text-dark">
+                            <i class="bi bi-moon-stars-fill text-info me-1"></i> Closing Time *
+                        </label>
+                        <input type="text" name="closing_time" class="form-control form-control-lg" value="{{ closing_time }}" placeholder="e.g. 10:00 PM" required>
+                        <div class="form-text small">e.g., <strong>10:00 PM</strong></div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="p-3 bg-light rounded-3 border">
+                            <small class="text-muted d-block fw-bold mb-1">Live Display Preview on Website:</small>
+                            <span class="badge bg-primary fs-6 px-3 py-2 rounded-pill">
+                                <i class="bi bi-clock-fill me-1"></i> Open {{ opening_time }} - {{ closing_time }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-bold small text-dark">
+                            <i class="bi bi-megaphone-fill text-primary me-1"></i> Special Shop Notice / Announcement (Optional)
+                        </label>
+                        <input type="text" name="shop_notice" class="form-control" value="{{ shop_notice }}" placeholder="e.g. Open all 7 days including Sunday!">
+                    </div>
+
+                    <div class="col-12 mt-4">
+                        <button type="submit" class="btn btn-primary-custom btn-lg w-100 fw-bold rounded-pill shadow-sm">
+                            <i class="bi bi-check-circle-fill me-2"></i> Save Shop Hours &amp; Settings
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

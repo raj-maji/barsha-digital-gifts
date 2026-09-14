@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Create an Account - Barsha Digital Gift{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="bg-primary text-white p-4 text-center">
+                    <i class="bi bi-person-plus-fill fs-1 mb-2"></i>
+                    <h4 class="fw-bold mb-1">Create an Account</h4>
+                    <p class="text-white-50 small mb-0">Join Barsha Digital Gifts to track your custom orders</p>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    <form action="{{ url_for('register') }}" method="POST">
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label class="form-label small fw-bold">Full Name *</label>
+                                <input type="text" name="name" class="form-control" placeholder="e.g. Subhankar Roy" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Email Address *</label>
+                                <input type="email" name="email" class="form-control" placeholder="name@domain.com" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Mobile Number *</label>
+                                <input type="tel" name="phone" class="form-control" placeholder="10-digit mobile number" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-bold">Password *</label>
+                                <input type="password" name="password" class="form-control" placeholder="Create a secure password" minlength="6" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-bold">Address (For Deliveries)</label>
+                                <textarea name="address" class="form-control" rows="2" placeholder="Your street, village, or locality in Kolaghat"></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">City / Town</label>
+                                <input type="text" name="city" class="form-control" value="Kolaghat">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Pincode</label>
+                                <input type="text" name="pincode" class="form-control" value="721134">
+                            </div>
+                            <div class="col-12 mt-4">
+                                <button type="submit" class="btn btn-primary-custom w-100 py-3 fw-bold rounded-pill">
+                                    <i class="bi bi-person-check-fill me-1"></i> Register Account
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-4 small">
+                        Already have an account? <a href="{{ url_for('login') }}" class="fw-bold text-primary">Login Here</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

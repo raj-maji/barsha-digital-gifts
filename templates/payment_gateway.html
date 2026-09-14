@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Scan UPI QR Code to Pay - Barsha Digital Gifts{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <!-- Header -->
+                <div class="bg-primary text-white p-4 text-center">
+                    <div class="d-inline-flex align-items-center gap-2 mb-2 bg-white bg-opacity-20 px-3 py-1 rounded-pill small">
+                        <i class="bi bi-shield-fill-check text-warning"></i>
+                        <span>Secure UPI Payment</span>
+                    </div>
+                    <h3 class="fw-bold mb-1">Barsha Digital Gifts</h3>
+                    <p class="text-white-50 small mb-0">Sahapur, Kolaghat &bull; Ph: 8513010387</p>
+                </div>
+
+                <div class="card-body p-4 text-center">
+                    <!-- Order Reference & Payable Amount -->
+                    <div class="p-3 bg-light rounded-3 mb-4 border d-flex justify-content-between align-items-center text-start">
+                        <div>
+                            <small class="text-muted d-block">Order Reference:</small>
+                            <span class="fs-5 fw-bold font-monospace text-primary">#{{ order.order_number }}</span>
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted d-block">Amount to Pay:</small>
+                            <span class="fs-3 fw-extrabold text-success">{{ order.total_amount|currency }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Instruction Step 1 -->
+                    <div class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill mb-3 fw-semibold">
+                        <i class="bi bi-1-circle-fill me-1"></i> Step 1: Scan &amp; Pay via Any UPI App
+                    </div>
+
+                    <!-- QR Code Box -->
+                    <div class="d-inline-block p-3 bg-white border border-2 border-primary rounded-4 shadow-sm mb-3">
+                        <img src="{{ upi_info.qr_code_url }}" alt="Barsha Digital Gifts UPI QR Code" class="img-fluid" style="width: 240px; height: 240px;">
+                        <div class="small fw-bold text-dark mt-2">
+                            <i class="bi bi-qr-code-scan text-primary me-1"></i> Scan with any UPI app
+                        </div>
+                    </div>
+
+                    <!-- Supported Apps Icons -->
+                    <div class="d-flex justify-content-center align-items-center gap-3 text-muted small mb-3">
+                        <span class="badge bg-light text-dark border"><i class="bi bi-google text-success me-1"></i>Google Pay</span>
+                        <span class="badge bg-light text-dark border"><i class="bi bi-phone text-primary me-1"></i>PhonePe</span>
+                        <span class="badge bg-light text-dark border"><i class="bi bi-wallet2 text-info me-1"></i>Paytm</span>
+                        <span class="badge bg-light text-dark border"><i class="bi bi-bank2 text-warning me-1"></i>BHIM</span>
+                    </div>
+
+                    <!-- Copy UPI ID Box -->
+                    <div class="p-2 bg-light rounded-3 mb-4 max-w-md mx-auto d-flex justify-content-between align-items-center text-start border">
+                        <div class="ms-2">
+                            <small class="text-muted d-block" style="font-size: 0.75rem;">Shop UPI ID / VPA:</small>
+                            <span class="font-monospace fw-bold text-dark fs-6" id="upi_id_text">{{ upi_info.upi_id }}</span>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="copyUpiId()">
+                            <i class="bi bi-clipboard me-1" id="copy_icon"></i> <span id="copy_text">Copy</span>
+                        </button>
+                    </div>
+
+                    <!-- Mobile Direct Pay Button -->
+                    <div class="d-block d-md-none mb-4">
+                        <a href="{{ upi_info.upi_url }}" class="btn btn-outline-primary w-100 rounded-pill py-2 fw-semibold">
+                            <i class="bi bi-phone me-1"></i> Click to Open UPI App on Phone
+                        </a>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Simple Instructions -->
+                    <div class="alert alert-info border-0 rounded-3 text-start small mb-4">
+                        <div class="d-flex align-items-start">
+                            <i class="bi bi-info-circle-fill fs-5 me-2 text-primary"></i>
+                            <div>
+                                <strong>How to Pay:</strong> Open Google Pay, PhonePe, Paytm, or BHIM, scan the QR code above, and pay <strong>{{ order.total_amount|currency }}</strong>.
+                                <br><br>
+                                Once your payment is credited to our bank account, Barsha Digital Gifts will verify it and immediately begin printing your customized gifts.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- WhatsApp Notification & Track Order Buttons -->
+                    <a href="https://wa.me/918513010387?text=Hello%20Barsha%20Digital%20Gifts%2C%20I%20have%20paid%20%E2%82%B9{{ order.total_amount }}%20for%20Order%20%23{{ order.order_number }}%20via%20UPI." target="_blank" class="btn btn-success btn-lg w-100 rounded-pill py-3 fw-bold mb-3 shadow-sm">
+                        <i class="bi bi-whatsapp me-2"></i> Notify Shop on WhatsApp (8513010387)
+                    </a>
+
+                    <a href="{{ url_for('track_orders', q=order.order_number) }}" class="btn btn-outline-primary w-100 rounded-pill py-2 fw-semibold">
+                        <i class="bi bi-search me-2"></i> Track Order Status
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function copyUpiId() {
+    const upi = document.getElementById('upi_id_text').innerText;
+    navigator.clipboard.writeText(upi).then(() => {
+        const copyText = document.getElementById('copy_text');
+        const copyIcon = document.getElementById('copy_icon');
+        copyText.innerText = 'Copied!';
+        copyIcon.className = 'bi bi-check-lg text-success';
+        setTimeout(() => {
+            copyText.innerText = 'Copy';
+            copyIcon.className = 'bi bi-clipboard';
+        }, 2500);
+    });
+}
+</script>
+{% endblock %}

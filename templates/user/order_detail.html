@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Order #{{ order.order_number }} - Barsha Digital Gift{% endblock %}
+
+{% block content %}
+<div class="bg-light py-4 border-bottom">
+    <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-center">
+            <div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-1 small">
+                        <li class="breadcrumb-item"><a href="{{ url_for('user_dashboard') }}">My Orders</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">#{{ order.order_number }}</li>
+                    </ol>
+                </nav>
+                <h1 class="h3 fw-bold mb-0">Order Tracking &amp; Details</h1>
+            </div>
+            <div class="mt-2 mt-md-0">
+                <a href="{{ url_for('user_dashboard') }}" class="btn btn-outline-secondary rounded-pill">
+                    <i class="bi bi-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <!-- Progress Timeline Tracker -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+        <h6 class="fw-bold mb-4 text-dark"><i class="bi bi-truck text-primary me-2"></i>Live Fulfillment Progress</h6>
+        
+        <div class="row text-center g-3">
+            <div class="col-3">
+                <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center mb-2 {% if order.order_status in ['Placed', 'Processing', 'In Printing', 'Shipped', 'Delivered'] %}bg-primary text-white{% else %}bg-light text-muted{% endif %}" style="width: 44px; height: 44px;">
+                    <i class="bi bi-receipt"></i>
+                </div>
+                <div class="small fw-bold">Placed</div>
+                <small class="text-muted d-none d-sm-block">Order Confirmed</small>
+            </div>
+            <div class="col-3">
+                <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center mb-2 {% if order.order_status in ['Processing', 'In Printing', 'Shipped', 'Delivered'] %}bg-primary text-white{% else %}bg-light text-muted{% endif %}" style="width: 44px; height: 44px;">
+                    <i class="bi bi-gear-wide-connected"></i>
+                </div>
+                <div class="small fw-bold">Design Ready</div>
+                <small class="text-muted d-none d-sm-block">Preparing Layout</small>
+            </div>
+            <div class="col-3">
+                <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center mb-2 {% if order.order_status in ['In Printing', 'Shipped', 'Delivered'] %}bg-primary text-white{% else %}bg-light text-muted{% endif %}" style="width: 44px; height: 44px;">
+                    <i class="bi bi-printer-fill"></i>
+                </div>
+                <div class="small fw-bold">In Printing</div>
+                <small class="text-muted d-none d-sm-block">Sublimation Press</small>
+            </div>
+            <div class="col-3">
+                <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center mb-2 {% if order.order_status == 'Delivered' %}bg-success text-white{% elif order.order_status == 'Shipped' %}bg-info text-white{% else %}bg-light text-muted{% endif %}" style="width: 44px; height: 44px;">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+                <div class="small fw-bold">Delivered</div>
+                <small class="text-muted d-none d-sm-block">Ready / Received</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Order Items Detail -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                <h5 class="fw-bold mb-3 border-bottom pb-2">Ordered Items &amp; Print Artwork</h5>
+                
+                <div class="d-flex flex-column gap-3">
+                    {% for item in order.items %}
+                    <div class="p-3 bg-light rounded-3">
+                        <div class="d-flex flex-wrap justify-content-between align-items-start mb-2">
+                            <h6 class="fw-bold mb-1">{{ item.product_name }} (Qty: {{ item.quantity }})</h6>
+                            <span class="fw-bold text-primary">{{ item.subtotal|currency }}</span>
+                        </div>
+
+                        {% if item.custom_text %}
+                        <div class="p-2 bg-white rounded border mb-2 small">
+                            <i class="bi bi-chat-quote-fill text-primary me-1"></i> Custom Text / Inscription:
+                            <strong class="text-dark">"{{ item.custom_text }}"</strong>
+                        </div>
+                        {% endif %}
+
+                        {% if item.custom_image %}
+                        <div class="mb-2">
+                            <small class="text-muted d-block mb-1"><i class="bi bi-image text-primary me-1"></i> Custom Artwork Uploaded:</small>
+                            <a href="{{ item.custom_image }}" target="_blank">
+                                <img src="{{ item.custom_image }}" alt="Artwork" class="img-thumbnail" style="max-height: 120px;">
+                            </a>
+                        </div>
+                        {% endif %}
+
+                        {% if item.custom_instructions %}
+                        <div class="small text-muted">
+                            <strong>Instructions:</strong> {{ item.custom_instructions }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary & Delivery Details -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                <h5 class="fw-bold mb-3 border-bottom pb-2">Delivery &amp; Payment</h5>
+                <div class="mb-3">
+                    <small class="text-muted d-block">Customer:</small>
+                    <span class="fw-bold">{{ order.customer_name }}</span>
+                    <div class="small text-muted">{{ order.customer_phone }}</div>
+                    <div class="small text-muted">{{ order.customer_email }}</div>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted d-block">Delivery Address:</small>
+                    <div class="small">{{ order.delivery_address }}</div>
+                    <div class="small">{{ order.city }} - {{ order.pincode }}</div>
+                </div>
+                <hr>
+                <div class="mb-2 d-flex justify-content-between small">
+                    <span class="text-muted">Payment Method:</span>
+                    <span class="fw-bold">{{ order.payment_method.upper() }}</span>
+                </div>
+                <div class="mb-2 d-flex justify-content-between small">
+                    <span class="text-muted">Payment Status:</span>
+                    <span class="badge bg-success">{{ order.payment_status }}</span>
+                </div>
+                {% if order.upi_utr %}
+                <div class="mb-2 d-flex justify-content-between small">
+                    <span class="text-muted">UTR Ref:</span>
+                    <span class="font-monospace fw-bold">{{ order.upi_utr }}</span>
+                </div>
+                {% endif %}
+                <div class="d-flex justify-content-between fw-bold fs-5 mt-3 pt-2 border-top">
+                    <span>Total:</span>
+                    <span class="text-primary">{{ order.total_amount|currency }}</span>
+                </div>
+            </div>
+
+            <!-- WhatsApp Inquire Card -->
+            <div class="p-3 bg-white border rounded-4 text-center">
+                <p class="small text-muted mb-2">Have a question regarding this order?</p>
+                <a href="https://wa.me/91{{ shop_phone_1 }}?text=Hello%20Barsha%20Digital%20Gift,%20I%20have%20an%20update%20request%20for%20order%20#{{ order.order_number }}" class="btn btn-whatsapp w-100 rounded-pill">
+                    <i class="bi bi-whatsapp me-1"></i> Ask on WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

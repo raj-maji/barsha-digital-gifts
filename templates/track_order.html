@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Track Order - Barsha Digital Gifts Kolaghat{% endblock %}
+
+{% block content %}
+<div class="bg-light py-4 border-bottom">
+    <div class="container text-center">
+        <h1 class="h3 fw-bold mb-1"><i class="bi bi-search text-primary me-2"></i>Track Your Order</h1>
+        <p class="text-muted small mb-0">Check the live printing, processing, and delivery status of your order</p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <!-- Search Form Card -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                <form action="{{ url_for('track_orders') }}" method="POST">
+                    <label class="form-label fw-bold small text-dark">Enter Your Order Number or Mobile Number:</label>
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-text bg-white"><i class="bi bi-search text-primary"></i></span>
+                        <input type="text" name="query" class="form-control" placeholder="e.g. BDG-20260914-XXXX or 9832725105" value="{{ query }}" required>
+                        <button type="submit" class="btn btn-primary-custom px-4 fw-bold">Track Now</button>
+                    </div>
+                    <div class="form-text small mt-2">
+                        <i class="bi bi-info-circle"></i> You received your order number on your screen and receipt when placing the order.
+                    </div>
+                </form>
+            </div>
+
+            <!-- Search Results -->
+            {% if searched %}
+                {% if orders %}
+                    <h5 class="fw-bold mb-3"><i class="bi bi-check2-circle text-success me-2"></i>Found {{ orders|length }} Order(s):</h5>
+                    <div class="d-flex flex-column gap-3">
+                        {% for order in orders %}
+                        <div class="card border-0 shadow-sm rounded-4 p-4">
+                            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                                <div>
+                                    <span class="fw-bold text-primary font-monospace fs-5">#{{ order.order_number }}</span>
+                                    <small class="text-muted d-block">Placed on {{ order.created_at.strftime('%d %b %Y, %I:%M %p') }}</small>
+                                </div>
+                                <div class="text-end">
+                                    {% if order.order_status == 'Placed' %}
+                                        <span class="badge badge-placed px-3 py-2 rounded-pill">Placed</span>
+                                    {% elif order.order_status == 'In Printing' %}
+                                        <span class="badge badge-printing px-3 py-2 rounded-pill">In Printing</span>
+                                    {% elif order.order_status == 'Shipped' %}
+                                        <span class="badge badge-shipped px-3 py-2 rounded-pill">Shipped</span>
+                                    {% elif order.order_status == 'Delivered' %}
+                                        <span class="badge badge-delivered px-3 py-2 rounded-pill">Delivered</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary px-3 py-2 rounded-pill">{{ order.order_status }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="bg-light p-3 rounded-3 mb-3">
+                                <div class="d-flex justify-content-between small mb-1">
+                                    <span class="text-muted">Customer Name:</span>
+                                    <span class="fw-bold">{{ order.customer_name }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between small mb-1">
+                                    <span class="text-muted">Payment Status:</span>
+                                    <span class="badge bg-success">{{ order.payment_status }} ({{ order.payment_method.upper() }})</span>
+                                </div>
+                                <div class="d-flex justify-content-between small">
+                                    <span class="text-muted">Total Amount:</span>
+                                    <span class="fw-bold text-primary">{{ order.total_amount|currency }}</span>
+                                </div>
+                            </div>
+
+                            <ul class="list-unstyled mb-3 small">
+                                {% for item in order.items %}
+                                <li class="py-1 border-bottom d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>{{ item.product_name }}</strong> &times; {{ item.quantity }}
+                                        {% if item.custom_text %}
+                                        <span class="text-muted fst-italic">("{{ item.custom_text }}")</span>
+                                        {% endif %}
+                                    </div>
+                                    {% if item.custom_image %}
+                                    <a href="{{ item.custom_image }}" target="_blank" class="badge bg-light text-primary border text-decoration-none">
+                                        <i class="bi bi-image"></i> View Photo
+                                    </a>
+                                    {% endif %}
+                                </li>
+                                {% endfor %}
+                            </ul>
+
+                            <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center">
+                                <a href="{{ url_for('order_success', order_number=order.order_number) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                    <i class="bi bi-receipt me-1"></i> View Receipt
+                                </a>
+                                <a href="https://wa.me/91{{ shop_phone_1 }}?text=Hello%20Barsha%20Digital%20Gifts,%20tracking%20update%20for%20order%20#{{ order.order_number }}" target="_blank" class="btn btn-sm btn-whatsapp rounded-pill px-3">
+                                    <i class="bi bi-whatsapp me-1"></i> Ask on WhatsApp
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="card border-0 shadow-sm rounded-4 p-5 text-center">
+                        <i class="bi bi-search text-muted fs-1 mb-2"></i>
+                        <h5 class="fw-bold">No order found for "{{ query }}"</h5>
+                        <p class="text-muted small mb-3">Please check your order number or phone number and try again.</p>
+                        <a href="https://wa.me/91{{ shop_phone_1 }}" class="btn btn-whatsapp rounded-pill d-inline-block px-4">
+                            <i class="bi bi-whatsapp me-1"></i> Help Me Find My Order
+                        </a>
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

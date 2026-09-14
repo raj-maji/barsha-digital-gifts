@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Razorpay Payment - Order #{{ order.order_number }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="bg-primary text-white p-4 text-center">
+                    <i class="bi bi-shield-lock-fill fs-1 mb-2"></i>
+                    <h3 class="fw-bold mb-1">Razorpay Secure Payment</h3>
+                    <p class="text-white-50 small mb-0">Credit/Debit Cards, Net Banking, and Wallets</p>
+                </div>
+
+                <div class="card-body p-4 p-md-5 text-center">
+                    <div class="mb-4">
+                        <small class="text-muted d-block">Order Reference</small>
+                        <h5 class="fw-bold">#{{ order.order_number }}</h5>
+                        <div class="display-6 fw-extrabold text-primary my-2">{{ order.total_amount|currency }}</div>
+                        <span class="badge bg-light text-secondary border">Customer: {{ order.customer_name }}</span>
+                    </div>
+
+                    {% if rzp_data.get('is_mock') %}
+                    <div class="alert alert-info text-start small mb-4">
+                        <i class="bi bi-info-circle-fill me-1"></i>
+                        <strong>Demo / Test Mode Active:</strong> You can simulate an instant test approval or configure your free live Razorpay API keys in <code>config.py</code>.
+                    </div>
+                    {% endif %}
+
+                    <!-- Form to submit verified response -->
+                    <form id="razorpay_form" action="{{ url_for('verify_razorpay') }}" method="POST">
+                        <input type="hidden" name="order_number" value="{{ order.order_number }}">
+                        <input type="hidden" name="razorpay_order_id" id="rzp_order_id" value="{{ rzp_data.get('razorpay_order_id') }}">
+                        <input type="hidden" name="razorpay_payment_id" id="rzp_payment_id" value="">
+                        <input type="hidden" name="razorpay_signature" id="rzp_signature" value="">
+
+                        {% if rzp_data.get('is_mock') %}
+                        <button type="button" id="btn_simulate_pay" class="btn btn-primary-custom btn-lg w-100 fw-bold py-3 mb-3">
+                            <i class="bi bi-credit-card-2-front me-2"></i> Simulate Successful Payment (Test Mode)
+                        </button>
+                        {% else %}
+                        <button type="button" id="rzp_button" class="btn btn-primary-custom btn-lg w-100 fw-bold py-3 mb-3">
+                            <i class="bi bi-lock-fill me-2"></i> Pay {{ order.total_amount|currency }} Now
+                        </button>
+                        {% endif %}
+                    </form>
+
+                    <a href="{{ url_for('pay_upi', order_number=order.order_number) }}" class="btn btn-outline-secondary w-100 rounded-pill">
+                        <i class="bi bi-qr-code me-1"></i> Switch to 0% Fee UPI QR Code
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% if not rzp_data.get('is_mock') %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    var options = {
+        "key": "{{ key_id }}",
+        "amount": "{{ rzp_data.amount }}",
+        "currency": "INR",
+        "name": "Barsha Digital Gift",
+        "description": "Payment for Order #{{ order.order_number }}",
+        "image": "https://cdn-icons-png.flaticon.com/512/3081/3081840.png",
+        "order_id": "{{ rzp_data.razorpay_order_id }}",
+        "handler": function (response){
+            document.getElementById('rzp_payment_id').value = response.razorpay_payment_id;
+            document.getElementById('rzp_order_id').value = response.razorpay_order_id;
+            document.getElementById('rzp_signature').value = response.razorpay_signature;
+            document.getElementById('razorpay_form').submit();
+        },
+        "prefill": {
+            "name": "{{ order.customer_name }}",
+            "email": "{{ order.customer_email }}",
+            "contact": "{{ order.customer_phone }}"
+        },
+        "theme": {
+            "color": "#4f46e5"
+        }
+    };
+    var rzp1 = new Razorpay(options);
+    document.getElementById('rzp_button').onclick = function(e){
+        rzp1.open();
+        e.preventDefault();
+    }
+</script>
+{% else %}
+<script>
+    document.getElementById('btn_simulate_pay').onclick = function() {
+        document.getElementById('rzp_payment_id').value = "pay_mock_" + Math.random().toString(36).substring(7);
+        document.getElementById('rzp_signature').value = "sig_mock_verified";
+        document.getElementById('razorpay_form').submit();
+    };
+</script>
+{% endif %}
+{% endblock %}

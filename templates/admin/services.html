@@ -1,0 +1,91 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Printing Inquiries - Admin Barsha Digital Gift{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-3 mb-4 border-bottom">
+    <div>
+        <h1 class="h3 fw-bold mb-1">Commercial Printing Inquiries</h1>
+        <p class="text-muted small mb-0">Follow up on customer requests for Flex Banners, Visiting Cards, Vinyl Stickers &amp; Spiral Binding</p>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th class="ps-4">ID</th>
+                    <th>Customer Name &amp; Contact</th>
+                    <th>Service Type</th>
+                    <th>Quantity / Specs</th>
+                    <th>Project Description</th>
+                    <th>Artwork / File</th>
+                    <th>Status</th>
+                    <th class="text-end pe-4">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if inquiries %}
+                    {% for inq in inquiries %}
+                    <tr>
+                        <td class="ps-4 fw-bold text-muted">#{{ inq.id }}</td>
+                        <td>
+                            <div class="fw-bold">{{ inq.customer_name }}</div>
+                            <div class="small text-muted">{{ inq.customer_phone }}</div>
+                            {% if inq.customer_email %}
+                            <small class="text-muted">{{ inq.customer_email }}</small>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge bg-primary bg-opacity-10 text-primary fs-6">{{ inq.service_type }}</span>
+                        </td>
+                        <td class="fw-semibold">{{ inq.quantity_estimate or 'Not specified' }}</td>
+                        <td style="max-width: 250px;">
+                            <div class="small text-truncate-2" title="{{ inq.details }}">{{ inq.details }}</div>
+                        </td>
+                        <td>
+                            {% if inq.file_attachment %}
+                            <a href="{{ inq.file_attachment }}" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill">
+                                <i class="bi bi-file-earmark-arrow-down"></i> View File
+                            </a>
+                            {% else %}
+                            <span class="text-muted small">No file</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form action="{{ url_for('admin_service_update', id=inq.id) }}" method="POST" class="d-inline">
+                                <select name="status" class="form-select form-select-sm rounded-pill" onchange="this.form.submit();">
+                                    <option value="New" {% if inq.status == 'New' %}selected{% endif %}>New</option>
+                                    <option value="Quotation Sent" {% if inq.status == 'Quotation Sent' %}selected{% endif %}>Quotation Sent</option>
+                                    <option value="Approved" {% if inq.status == 'Approved' %}selected{% endif %}>Approved / Printing</option>
+                                    <option value="Completed" {% if inq.status == 'Completed' %}selected{% endif %}>Completed</option>
+                                    <option value="Cancelled" {% if inq.status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                                </select>
+                            </form>
+                        </td>
+                        <td class="text-end pe-4">
+                            <div class="d-flex justify-content-end gap-1">
+                                <a href="tel:{{ inq.customer_phone }}" class="btn btn-sm btn-outline-success rounded-circle" title="Call">
+                                    <i class="bi bi-telephone-fill"></i>
+                                </a>
+                                <a href="https://wa.me/91{{ inq.customer_phone }}?text=Hello%20{{ inq.customer_name }},%20this%20is%20Barsha%20Digital%20Gift%20Kolaghat%20regarding%20your%20printing%20inquiry%20for%20{{ inq.service_type }}." target="_blank" class="btn btn-sm btn-whatsapp rounded-circle" title="WhatsApp">
+                                    <i class="bi bi-whatsapp"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <i class="bi bi-inbox fs-1 d-block mb-2 text-secondary"></i>
+                            No printing inquiries received yet.
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

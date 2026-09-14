@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+
+{% block title %}Barsha Digital Gift - Personalized Gifts & Printing Services in Kolaghat{% endblock %}
+
+{% block content %}
+<!-- Hero Banner -->
+<section class="hero-banner">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-7">
+                <span class="hero-tag"><i class="bi bi-stars me-1"></i> Best Custom Printing in East Medinipur</span>
+                <h1 class="display-4 fw-extrabold mb-3">Turn Your Memories into Treasured Gifts</h1>
+                <p class="lead text-white-50 mb-4">
+                    High definition custom photo printing on <strong>T-Shirts, Coffee Mugs, Keychains, Decorative Frames, Natural Stones, Watches &amp; Tiles</strong>. Factory-direct quality in Sahapur, Kolaghat.
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="{{ url_for('products') }}" class="btn btn-warning btn-lg fw-bold rounded-pill px-4 shadow">
+                        <i class="bi bi-gift me-2"></i> Customize Your Gift
+                    </a>
+                    <a href="https://wa.me/91{{ shop_phone_1 }}" class="btn btn-whatsapp btn-lg rounded-pill px-4">
+                        <i class="bi bi-whatsapp me-2"></i> WhatsApp Order
+                    </a>
+                    <a href="{{ url_for('track_orders') }}" class="btn btn-outline-light btn-lg rounded-pill px-4">
+                        <i class="bi bi-box-seam me-2"></i> Track Order
+                    </a>
+                </div>
+                
+                <div class="row mt-5 pt-3 g-4 border-top border-white border-opacity-10 text-white-50">
+                    <div class="col-sm-4 d-flex align-items-center gap-2">
+                        <i class="bi bi-check-circle-fill text-warning fs-4"></i>
+                        <span>HD Sublimation Print</span>
+                    </div>
+                    <div class="col-sm-4 d-flex align-items-center gap-2">
+                        <i class="bi bi-truck text-warning fs-4"></i>
+                        <span>Kolaghat Fast Delivery</span>
+                    </div>
+                    <div class="col-sm-4 d-flex align-items-center gap-2">
+                        <i class="bi bi-shield-check text-warning fs-4"></i>
+                        <span>Zero-Fee UPI &amp; Cards</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5 text-center">
+                <div class="position-relative">
+                    <img src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=700&q=80" 
+                         alt="Customized Mugs and Gifts" 
+                         class="img-fluid rounded-4 shadow-lg border border-4 border-white" style="max-height: 420px; object-fit: cover; width: 100%;">
+                    <div class="position-absolute bottom-0 start-0 m-3 p-3 bg-white text-dark rounded-3 shadow text-start">
+                        <div class="fw-bold text-primary"><i class="bi bi-tag-fill me-1"></i> Starting from only ₹120</div>
+                        <small class="text-muted">High resolution, smudge-proof print</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Grid -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-bold">OUR CATEGORIES</span>
+            <h2 class="fw-bold mt-2">Explore Personalized Gift Categories</h2>
+            <p class="text-muted">Choose your favorite product, upload your photo, and we print it with perfection</p>
+        </div>
+
+        <div class="row g-4">
+            {% for cat in categories %}
+            <div class="col-6 col-md-4 col-lg-2">
+                <a href="{{ url_for('products', category=cat.slug) }}" class="text-decoration-none">
+                    <div class="card card-hover h-100 text-center p-3 border-0 shadow-sm">
+                        <div class="mx-auto rounded-circle overflow-hidden mb-3" style="width: 80px; height: 80px;">
+                            <img src="{{ cat.image_url }}" alt="{{ cat.name }}" class="w-100 h-100 object-fit-cover">
+                        </div>
+                        <h6 class="fw-bold text-dark mb-1">{{ cat.name }}</h6>
+                        <small class="text-primary fw-semibold">View Items <i class="bi bi-arrow-right"></i></small>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products Section -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
+            <div>
+                <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill fw-bold">HOT PICKS</span>
+                <h2 class="fw-bold mt-2 mb-0">Popular Custom Gifts</h2>
+            </div>
+            <a href="{{ url_for('products') }}" class="btn btn-outline-primary rounded-pill px-4">
+                View All Gifts <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="row g-4">
+            {% for prod in featured_products %}
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="card card-hover h-100 border-0 shadow-sm position-relative">
+                    {% if prod.discount_percent > 0 %}
+                    <span class="discount-pill">{{ prod.discount_percent }}% OFF</span>
+                    {% endif %}
+                    {% if prod.is_customizable %}
+                    <span class="custom-badge"><i class="bi bi-pencil-square"></i> Customizable</span>
+                    {% endif %}
+
+                    <img src="{{ prod.image_url or '/static/images/placeholder.jpg' }}" class="product-card-img" alt="{{ prod.name }}">
+
+                    <div class="card-body d-flex flex-column p-3">
+                        <small class="text-muted mb-1">{{ prod.category.name }}</small>
+                        <h6 class="card-title fw-bold mb-2 text-truncate" title="{{ prod.name }}">
+                            <a href="{{ url_for('product_detail', slug=prod.slug) }}" class="text-dark text-decoration-none">
+                                {{ prod.name }}
+                            </a>
+                        </h6>
+                        
+                        <div class="mt-auto pt-2">
+                            <div class="d-flex align-items-baseline mb-3">
+                                <span class="price-current">{{ prod.current_price|currency }}</span>
+                                {% if prod.discount_price %}
+                                <span class="price-original">{{ prod.price|currency }}</span>
+                                {% endif %}
+                            </div>
+
+                            <a href="{{ url_for('product_detail', slug=prod.slug) }}" class="btn btn-primary-custom w-100">
+                                <i class="bi bi-magic me-1"></i> Customize & Buy
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Us -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Why Kolaghat Loves Barsha Digital Gift</h2>
+            <p class="text-muted">We combine state-of-the-art sublimation printing with personalized local care</p>
+        </div>
+
+        <div class="row g-4 text-center">
+            <div class="col-md-3">
+                <div class="p-4 bg-white rounded-4 shadow-sm h-100 border">
+                    <div class="service-icon-box mx-auto">
+                        <i class="bi bi-palette-fill"></i>
+                    </div>
+                    <h5 class="fw-bold">HD Sublimation Print</h5>
+                    <p class="text-muted small mb-0">Fade-resistant, waterproof printing with vivid colours that last for years.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="p-4 bg-white rounded-4 shadow-sm h-100 border">
+                    <div class="service-icon-box mx-auto">
+                        <i class="bi bi-eye-fill"></i>
+                    </div>
+                    <h5 class="fw-bold">Real-Time Photo Preview</h5>
+                    <p class="text-muted small mb-0">Upload your own photo & quote online and preview how it looks before ordering.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="p-4 bg-white rounded-4 shadow-sm h-100 border">
+                    <div class="service-icon-box mx-auto">
+                        <i class="bi bi-qr-code-scan"></i>
+                    </div>
+                    <h5 class="fw-bold">0% Fee UPI & Online Pay</h5>
+                    <p class="text-muted small mb-0">Pay seamlessly using GPay, PhonePe, Paytm QR or Razorpay with full security.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="p-4 bg-white rounded-4 shadow-sm h-100 border">
+                    <div class="service-icon-box mx-auto">
+                        <i class="bi bi-shop"></i>
+                    </div>
+                    <h5 class="fw-bold">Local Kolaghat Store</h5>
+                    <p class="text-muted small mb-0">Visit our Sahapur shop or get doorstep delivery across East Medinipur & nearby.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Location & Store Contact Section -->
+<section class="py-5 bg-white border-top">
+    <div class="container">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-6">
+                <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-bold mb-2">VISIT OUR STORE</span>
+                <h3 class="fw-bold mb-3">Barsha Digital Gift & Printing</h3>
+                <div class="mb-3 d-flex align-items-start gap-3">
+                    <i class="bi bi-geo-alt-fill text-danger fs-3"></i>
+                    <div>
+                        <div class="fw-bold">Address:</div>
+                        <div class="text-muted">{{ shop_location }}</div>
+                    </div>
+                </div>
+                <div class="mb-3 d-flex align-items-center gap-3">
+                    <i class="bi bi-telephone-fill text-primary fs-4"></i>
+                    <div>
+                        <div class="fw-bold">Call / WhatsApp:</div>
+                        <a href="tel:{{ shop_phone_1 }}" class="text-decoration-none fw-bold me-2">{{ shop_phone_1 }}</a>
+                        <span>|</span>
+                        <a href="tel:{{ shop_phone_2 }}" class="text-decoration-none fw-bold ms-2">{{ shop_phone_2 }}</a>
+                    </div>
+                </div>
+                <div class="mb-4 d-flex align-items-center gap-3">
+                    <i class="bi bi-clock-fill text-success fs-4"></i>
+                    <div>
+                        <div class="fw-bold">Store Hours:</div>
+                        <div class="text-muted">Monday - Sunday: {{ opening_time }} - {{ closing_time }}</div>
+                    </div>
+                </div>
+                <div class="d-flex gap-3">
+                    <a href="https://wa.me/91{{ shop_phone_1 }}?text=Hello%20Barsha%20Digital%20Gift" class="btn btn-whatsapp rounded-pill px-4">
+                        <i class="bi bi-whatsapp"></i> Chat on WhatsApp
+                    </a>
+                    <a href="tel:{{ shop_phone_1 }}" class="btn btn-outline-primary rounded-pill px-4">
+                        <i class="bi bi-telephone-fill"></i> Call Now
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="p-4 bg-light rounded-4 border text-center">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-envelope-paper-heart text-primary me-2"></i>Instant Quick Order / Inquiry</h5>
+                    <form action="{{ url_for('service_inquire') }}" method="POST">
+                        <div class="row g-3">
+                            <div class="col-sm-6 text-start">
+                                <label class="form-label small fw-semibold">Your Name *</label>
+                                <input type="text" name="customer_name" class="form-control" placeholder="e.g. Subhash Ghosh" required>
+                            </div>
+                            <div class="col-sm-6 text-start">
+                                <label class="form-label small fw-semibold">Phone Number *</label>
+                                <input type="tel" name="customer_phone" class="form-control" placeholder="10-digit mobile number" required>
+                            </div>
+                            <div class="col-12 text-start">
+                                <label class="form-label small fw-semibold">What do you want to print? *</label>
+                                <select name="service_type" class="form-select" required>
+                                    <option value="Custom Photo Mug">Custom Photo Mug</option>
+                                    <option value="T-Shirt Printing">T-Shirt Printing</option>
+                                    <option value="Rock Stone Photo Slate">Rock Stone Photo Slate</option>
+                                    <option value="Photo Frame / Clock">Photo Frame / Clock</option>
+                                    <option value="Keychains / Watches">Keychains / Watches</option>
+                                    <option value="Photo Tiles / Cushions">Photo Tiles / Cushions</option>
+                                    <option value="Other Customized Gift">Other Customized Gift</option>
+                                </select>
+                            </div>
+                            <div class="col-12 text-start">
+                                <label class="form-label small fw-semibold">Message / Specifications</label>
+                                <textarea name="details" class="form-control" rows="2" placeholder="Tell us quantity, size, or special requirements..." required></textarea>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary-custom w-100">
+                                    <i class="bi bi-send-fill me-1"></i> Send Inquiry to Barsha Digital Gift
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

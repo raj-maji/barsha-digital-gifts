@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} - Barsha Digital Gift Kolaghat{% endblock %}
+
+{% block content %}
+<div class="bg-light py-3 border-bottom">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 small">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('products') }}">Products</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('products', category=product.category.slug) }}">{{ product.category.name }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row g-5">
+        <!-- Left: Product Image & Interactive Mockup Preview -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+                <img src="{{ product.image_url }}" id="base_product_image" class="w-100 img-fluid" alt="{{ product.name }}" style="max-height: 440px; object-fit: cover;">
+            </div>
+
+            {% if product.is_customizable %}
+            <!-- Real-Time Custom Print Preview Box -->
+            <div class="customizer-box">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold mb-0 text-primary"><i class="bi bi-eye-fill me-2"></i>Live Customization Preview</h6>
+                    <span class="badge bg-success bg-opacity-10 text-success">Instant Preview</span>
+                </div>
+                <div class="preview-mockup-frame">
+                    <div id="preview_placeholder" class="text-center text-muted py-4">
+                        <i class="bi bi-image fs-1 text-secondary mb-2 d-block"></i>
+                        <p class="small mb-0">Upload your photo below to preview it here</p>
+                    </div>
+                    <img id="preview_custom_image" src="" alt="Custom Upload Preview" class="preview-user-img d-none mb-2">
+                    <div id="preview_custom_text" class="fw-bold text-dark fs-5 text-center mt-2 d-none" style="font-family: 'Georgia', serif;"></div>
+                </div>
+                <small class="text-muted d-block mt-2 text-center">
+                    <i class="bi bi-info-circle"></i> Our Kolaghat design team will optimize and position your photo for the best print output.
+                </small>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Right: Details, Customizer Form & Purchase -->
+        <div class="col-lg-6">
+            <div class="ps-lg-3">
+                <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-bold mb-2">
+                    {{ product.category.name }}
+                </span>
+                
+                <h1 class="h2 fw-extrabold text-dark mb-3">{{ product.name }}</h1>
+
+                <!-- Price Row -->
+                <div class="d-flex align-items-baseline gap-3 mb-3 p-3 bg-light rounded-3">
+                    <span class="fs-2 fw-extrabold text-primary">{{ product.current_price|currency }}</span>
+                    {% if product.discount_price %}
+                    <span class="fs-5 text-muted text-decoration-line-through">{{ product.price|currency }}</span>
+                    <span class="badge bg-danger rounded-pill">{{ product.discount_percent }}% OFF</span>
+                    {% endif %}
+                    <span class="badge bg-success bg-opacity-10 text-success ms-auto"><i class="bi bi-check2-circle"></i> In Stock</span>
+                </div>
+
+                <p class="text-secondary mb-4">{{ product.description }}</p>
+
+                <!-- Order / Customizer Form -->
+                <form action="{{ url_for('add_to_cart') }}" method="POST" enctype="multipart/form-data" class="card border p-4 rounded-4 shadow-sm bg-white mb-4">
+                    <input type="hidden" name="product_id" value="{{ product.id }}">
+
+                    {% if product.is_customizable %}
+                    <h5 class="fw-bold mb-3 text-dark border-bottom pb-2">
+                        <i class="bi bi-palette text-primary me-2"></i>Personalize Your Item
+                    </h5>
+
+                    <!-- Photo Upload -->
+                    {% if product.allow_photo_upload %}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-dark d-flex justify-content-between">
+                            <span><i class="bi bi-camera-fill text-primary me-1"></i> Upload Photo / Image *</span>
+                            <span class="text-muted fw-normal small">JPG, PNG, WebP (Max 16MB)</span>
+                        </label>
+                        <input type="file" name="custom_image" id="custom_image_input" class="form-control" accept="image/*">
+                        <div class="form-text small">Upload your best quality picture for sharp HD sublimation print.</div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Custom Text / Wish -->
+                    {% if product.allow_text_customization %}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-dark">
+                            <i class="bi bi-chat-quote-fill text-primary me-1"></i> Custom Name / Text / Wish
+                        </label>
+                        <input type="text" name="custom_text" id="custom_text_input" class="form-control" placeholder="e.g. Happy Birthday Sneha / R &amp; S">
+                        <div class="form-text small">Enter any message, names, or quotes you'd like printed.</div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Special Notes (Size, Colors, Instructions) -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-dark">
+                            <i class="bi bi-card-text text-primary me-1"></i> Special Instructions (Optional)
+                        </label>
+                        <textarea name="custom_notes" class="form-control" rows="2" placeholder="e.g. Size L, Black T-Shirt, print on front &amp; back"></textarea>
+                    </div>
+                    {% endif %}
+
+                    <!-- Quantity & Add to Cart -->
+                    <div class="row align-items-center g-3 mt-2">
+                        <div class="col-4">
+                            <label class="form-label small fw-bold">Quantity:</label>
+                            <input type="number" name="quantity" class="form-control text-center fw-bold" value="1" min="1" max="{{ product.stock }}">
+                        </div>
+                        <div class="col-8">
+                            <label class="form-label small d-none d-sm-block">&nbsp;</label>
+                            <button type="submit" class="btn btn-primary-custom w-100 py-2">
+                                <i class="bi bi-cart-plus-fill me-2"></i> Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Store Highlights & Assurance -->
+                <div class="row g-3 text-secondary small">
+                    <div class="col-6 d-flex align-items-center gap-2">
+                        <i class="bi bi-shop text-primary fs-5"></i>
+                        <span>Shop Pickup in Sahapur, Kolaghat</span>
+                    </div>
+                    <div class="col-6 d-flex align-items-center gap-2">
+                        <i class="bi bi-shield-lock text-primary fs-5"></i>
+                        <span>100% Safe UPI & Online Payments</span>
+                    </div>
+                    <div class="col-6 d-flex align-items-center gap-2">
+                        <i class="bi bi-telephone text-primary fs-5"></i>
+                        <span>Direct Help: 8513010387</span>
+                    </div>
+                    <div class="col-6 d-flex align-items-center gap-2">
+                        <i class="bi bi-patch-check text-primary fs-5"></i>
+                        <span>High Grade Sublimation Inks</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Related Products -->
+    {% if related_products %}
+    <div class="mt-5 pt-5 border-top">
+        <h4 class="fw-bold mb-4">You May Also Like</h4>
+        <div class="row g-4">
+            {% for rel in related_products %}
+            <div class="col-6 col-md-3">
+                <div class="card card-hover h-100 border-0 shadow-sm">
+                    <img src="{{ rel.image_url }}" class="product-card-img" alt="{{ rel.name }}">
+                    <div class="card-body p-3">
+                        <h6 class="fw-bold text-truncate mb-2">
+                            <a href="{{ url_for('product_detail', slug=rel.slug) }}" class="text-dark text-decoration-none">{{ rel.name }}</a>
+                        </h6>
+                        <div class="fw-bold text-primary mb-2">{{ rel.current_price|currency }}</div>
+                        <a href="{{ url_for('product_detail', slug=rel.slug) }}" class="btn btn-sm btn-outline-primary w-100 rounded-pill">Customize</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Product Catalog - Admin Barsha Digital Gift{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-3 mb-4 border-bottom">
+    <div>
+        <h1 class="h3 fw-bold mb-1">Product Inventory</h1>
+        <p class="text-muted small mb-0">Add, edit prices, manage customizable gifts, and update stock</p>
+    </div>
+    <a href="{{ url_for('admin_product_new') }}" class="btn btn-primary-custom rounded-pill">
+        <i class="bi bi-plus-circle-fill me-1"></i> Add New Product
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th class="ps-4">Product</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Customizable?</th>
+                    <th>Stock</th>
+                    <th class="text-end pe-4">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prod in products %}
+                <tr>
+                    <td class="ps-4 py-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <img src="{{ prod.image_url }}" alt="{{ prod.name }}" class="rounded-3" style="width: 55px; height: 55px; object-fit: cover;">
+                            <div>
+                                <h6 class="fw-bold mb-0">{{ prod.name }}</h6>
+                                <small class="text-muted">Slug: {{ prod.slug }}</small>
+                                {% if prod.is_featured %}
+                                <span class="badge bg-warning text-dark ms-1">Featured</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge bg-light text-dark border">{{ prod.category.name }}</span>
+                    </td>
+                    <td>
+                        <div class="fw-bold text-primary">{{ prod.current_price|currency }}</div>
+                        {% if prod.discount_price %}
+                        <small class="text-muted text-decoration-line-through">{{ prod.price|currency }}</small>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if prod.is_customizable %}
+                            <span class="badge bg-success bg-opacity-10 text-success"><i class="bi bi-check-circle"></i> Photo &amp; Text</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Standard</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="fw-bold {% if prod.stock < 10 %}text-danger{% else %}text-dark{% endif %}">{{ prod.stock }}</span>
+                    </td>
+                    <td class="text-end pe-4">
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="{{ url_for('product_detail', slug=prod.slug) }}" class="btn btn-sm btn-outline-secondary rounded-pill" target="_blank" title="View in store">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{{ url_for('admin_product_edit', id=prod.id) }}" class="btn btn-sm btn-outline-primary rounded-pill" title="Edit product">
+                                <i class="bi bi-pencil-square"></i> Edit
+                            </a>
+                            <form action="{{ url_for('admin_product_delete', id=prod.id) }}" method="POST" onsubmit="return confirm('Delete this product permanently?');" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill" title="Delete">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

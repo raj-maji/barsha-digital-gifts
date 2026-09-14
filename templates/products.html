@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Gift Catalog - Barsha Digital Gift Kolaghat{% endblock %}
+
+{% block content %}
+<div class="bg-light py-4 border-bottom">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Catalog</li>
+                {% if selected_category %}
+                <li class="breadcrumb-item active" aria-current="page">{{ selected_category.name }}</li>
+                {% endif %}
+            </ol>
+        </nav>
+        <h1 class="h3 fw-bold mb-0">
+            {% if selected_category %}
+                {{ selected_category.name }}
+            {% elif search_query %}
+                Search Results for "{{ search_query }}"
+            {% else %}
+                All Personalized Gifts & Printing Items
+            {% endif %}
+        </h1>
+        <p class="text-muted small mb-0">Choose your design, upload photos, and get custom prints made in Sahapur, Kolaghat</p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row g-4">
+        <!-- Sidebar Filters -->
+        <div class="col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 mb-4">
+                <h6 class="fw-bold mb-3"><i class="bi bi-funnel text-primary me-2"></i>Categories</h6>
+                <div class="list-group list-group-flush">
+                    <a href="{{ url_for('products', sort=sort) }}" class="list-group-item list-group-item-action border-0 px-2 py-2 rounded-2 {% if not selected_category %}active bg-primary text-white{% endif %}">
+                        <i class="bi bi-grid me-2"></i> All Products
+                    </a>
+                    {% for cat in categories %}
+                    <a href="{{ url_for('products', category=cat.slug, sort=sort) }}" class="list-group-item list-group-item-action border-0 px-2 py-2 rounded-2 {% if selected_category and selected_category.id == cat.id %}active bg-primary text-white{% endif %}">
+                        <i class="bi {{ cat.icon }} me-2"></i> {{ cat.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Help Box -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center bg-primary text-white">
+                <i class="bi bi-headset fs-1 mb-2"></i>
+                <h6 class="fw-bold">Need Custom Design Help?</h6>
+                <p class="small text-white-50">Our designer in Kolaghat can create a personalized design for your event or birthday for free.</p>
+                <a href="https://wa.me/91{{ shop_phone_1 }}" class="btn btn-warning btn-sm rounded-pill fw-bold">
+                    <i class="bi bi-whatsapp"></i> Chat With Us
+                </a>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="col-lg-9">
+            <!-- Top Controls -->
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-2 border-bottom">
+                <div class="text-muted small">
+                    Showing <strong>{{ products|length }}</strong> products
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <label class="small text-muted fw-semibold text-nowrap">Sort By:</label>
+                    <select class="form-select form-select-sm rounded-pill" onchange="location = this.value;">
+                        <option value="{{ url_for('products', category=request.args.get('category'), q=request.args.get('q'), sort='newest') }}" {% if sort == 'newest' %}selected{% endif %}>Newest Additions</option>
+                        <option value="{{ url_for('products', category=request.args.get('category'), q=request.args.get('q'), sort='price_low') }}" {% if sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+                        <option value="{{ url_for('products', category=request.args.get('category'), q=request.args.get('q'), sort='price_high') }}" {% if sort == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Products List -->
+            {% if products %}
+            <div class="row g-4">
+                {% for prod in products %}
+                <div class="col-12 col-sm-6 col-md-4">
+                    <div class="card card-hover h-100 border-0 shadow-sm position-relative">
+                        {% if prod.discount_percent > 0 %}
+                        <span class="discount-pill">{{ prod.discount_percent }}% OFF</span>
+                        {% endif %}
+                        {% if prod.is_customizable %}
+                        <span class="custom-badge"><i class="bi bi-pencil-square"></i> Customizable</span>
+                        {% endif %}
+
+                        <img src="{{ prod.image_url or '/static/images/placeholder.jpg' }}" class="product-card-img" alt="{{ prod.name }}">
+
+                        <div class="card-body d-flex flex-column p-3">
+                            <small class="text-muted mb-1">{{ prod.category.name }}</small>
+                            <h6 class="card-title fw-bold mb-2">
+                                <a href="{{ url_for('product_detail', slug=prod.slug) }}" class="text-dark text-decoration-none">
+                                    {{ prod.name }}
+                                </a>
+                            </h6>
+                            
+                            <p class="card-text text-muted small text-truncate-2 mb-3">
+                                {{ prod.description[:90] }}...
+                            </p>
+
+                            <div class="mt-auto pt-2">
+                                <div class="d-flex align-items-baseline mb-3">
+                                    <span class="price-current">{{ prod.current_price|currency }}</span>
+                                    {% if prod.discount_price %}
+                                    <span class="price-original">{{ prod.price|currency }}</span>
+                                    {% endif %}
+                                </div>
+
+                                <a href="{{ url_for('product_detail', slug=prod.slug) }}" class="btn btn-primary-custom w-100">
+                                    <i class="bi bi-magic me-1"></i> Customize & Buy
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-search fs-1 text-muted"></i>
+                <h5 class="fw-bold mt-3">No products found</h5>
+                <p class="text-muted">Try changing your search query or category filter.</p>
+                <a href="{{ url_for('products') }}" class="btn btn-outline-primary rounded-pill">View All Products</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
