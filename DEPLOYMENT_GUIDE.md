@@ -57,56 +57,17 @@ git push -u origin main
    - **Build Command**: `pip install -r requirements.txt && python seed_data.py`
    - **Start Command**: `gunicorn app:app`
    - **Instance Type**: Select **Free**
-5. Under **Environment Variables**, add:
-   - `SECRET_KEY`: any secure random string
-   - `SHOP_UPI_ID`: `8513010387@ybl` (or your preferred PhonePe/GPay UPI ID)
-   - `RAZORPAY_KEY_ID`: your Razorpay key
-   - `RAZORPAY_KEY_SECRET`: your Razorpay secret
+5. Under **Environment Variables** (Optional):
+   - `SECRET_KEY`: any secure random string (e.g. `barsha-secure-key-2026`)
 6. Click **Create Web Service**.
-7. In 2-3 minutes, your store will be live on: `https://barsha-digital-gift.onrender.com`!
+7. In 2-3 minutes, your store will be live on: `https://barsha-digital-gifts.onrender.com`!
 
 ---
 
-## 3. Alternative 100% Free Hosting: PythonAnywhere.com
-
-[PythonAnywhere](https://www.pythonanywhere.com/) provides a permanent 100% free hosting plan for Python Flask apps:
-1. Sign up for a free Beginner account at [pythonanywhere.com](https://www.pythonanywhere.com/).
-2. Go to the **Web** tab &rarr; Click **Add a new web app**.
-3. Select **Flask** and choose **Python 3.10 / 3.11**.
-4. Go to **Files** tab and upload your project zip file, then extract it into your home directory.
-5. In the **WSGI configuration file**, point to your `app.py`:
-   ```python
-   import sys
-   path = '/home/yourusername/barsha_digital_gift'
-   if path not in sys.path:
-       sys.path.append(path)
-   from app import app as application
-   ```
-6. Click **Reload** and your site will be live at `https://yourusername.pythonanywhere.com` with free HTTPS!
-
----
-
-## 4. Setting Up Free Online Payment Gateways
-
-### Method A: Zero-Cost Instant UPI QR Code (Active by Default)
-- **Cost**: ₹0 setup fee, ₹0 annual fee, **0% transaction charges**.
-- **How it works**:
-  1. Whenever a customer places an order, the website automatically creates a dynamic QR code pre-filled with the exact order amount and your UPI ID (`8513010387@ybl`).
-  2. The customer scans it with **Google Pay, PhonePe, Paytm, BHIM, or any bank app**.
-  3. The payment is transferred directly to your bank account immediately with no middleman cut.
-  4. The customer submits their 12-digit UTR reference number or screenshot.
-  5. In your **Admin Panel** (`/admin/orders`), you verify the UTR with your bank message and click **"Verified"**!
-
-### Method B: Razorpay Online Payment Gateway (For Cards & Netbanking)
-- **Cost**: ₹0 setup fee, ₹0 annual maintenance fee (Razorpay charges only ~2% per transaction when a customer pays via credit/debit card).
-- **How to get your free API Keys**:
-  1. Go to [razorpay.com](https://razorpay.com) and click **Sign Up** (Free).
-  2. Go to **Settings** &rarr; **API Keys** &rarr; Click **Generate Test Key**.
-  3. Copy your `Key ID` and `Key Secret`.
-  4. Put them into your `config.py` or Render Environment Variables:
-     - `RAZORPAY_KEY_ID = "rzp_test_..."`
-     - `RAZORPAY_KEY_SECRET = "..."`
-  5. Once you complete free KYC with your Aadhaar/PAN and bank account details, switch to **Live Key** to accept real customer cards!
+## 3. Payment Mode: 100% Cash on Delivery (COD) / Pay at Shop
+- No online payment gateway registration, KYC, or gateway fees required!
+- Customers select Cash on Delivery, provide their delivery address, and confirm their order.
+- In your **Admin Panel** (`/admin/orders`), you review the customized print files, prepare the items, and click **"Mark Cash Collected"** upon delivery or shop pickup.
 
 ---
 
