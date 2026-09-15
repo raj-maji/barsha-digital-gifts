@@ -443,6 +443,10 @@ def register():
         city = request.form.get('city', 'Kolaghat')
         pincode = request.form.get('pincode', '721134')
         
+        if 'admin' in email.lower():
+            flash('Administrative accounts cannot be registered publicly.', 'danger')
+            return redirect(url_for('login'))
+
         existing = User.query.filter_by(email=email).first()
         if existing:
             flash('An account with this email already exists. Please log in.', 'warning')
@@ -454,7 +458,8 @@ def register():
             phone=phone,
             address=address,
             city=city,
-            pincode=pincode
+            pincode=pincode,
+            is_admin=False
         )
         user.set_password(password)
         db.session.add(user)
