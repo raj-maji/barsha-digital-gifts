@@ -3,7 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Barsha Digital Gifts - Personalized Gifts & Printing Services in Kolaghat{% endblock %}</title>
+    <title>{% block title %}Barsha Digital Gifts | Best Personalized Gifts &amp; Printing in Kolaghat{% endblock %}</title>
+    
+    <!-- Primary SEO Meta Tags -->
+    <meta name="title" content="Barsha Digital Gifts | Best Personalized Gifts &amp; Printing in Kolaghat">
+    <meta name="description" content="{% block meta_description %}Barsha Digital Gifts (Sahapur, Kolaghat, East Medinipur). Top-rated custom gift shop for personalized photo mugs, printed t-shirts, rock slates, wooden photo frames, clocks, cushions, visiting cards &amp; flex banner printing. 100% Cash on Delivery.{% endblock %}">
+    <meta name="keywords" content="Barsha Digital Gifts, Barsha Digital Gift, Barsha Digital Gifts Kolaghat, Barsha Digital Gift Sahapur, personalized gifts Kolaghat, custom mug printing Kolaghat, custom t-shirt printing East Medinipur, photo frame gifts Kolaghat, flex printing Kolaghat, visiting cards printing Kolaghat, Barsha printing shop, gift shop near me">
+    <meta name="author" content="Barsha Digital Gifts">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <link rel="canonical" href="{{ request.base_url }}">
+    
+    <!-- Local SEO Geo Tags for Kolaghat, West Bengal -->
+    <meta name="geo.region" content="IN-WB">
+    <meta name="geo.placename" content="Kolaghat, Purba Medinipur">
+    <meta name="geo.position" content="22.4284;87.8732">
+    <meta name="ICBM" content="22.4284, 87.8732">
+    
+    <!-- Open Graph / Facebook / WhatsApp -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Barsha Digital Gifts">
+    <meta property="og:title" content="{% block og_title %}Barsha Digital Gifts - Personalized Gifts &amp; Printing Services in Kolaghat{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Custom photo mugs, t-shirts, rock slates, wooden photo frames &amp; commercial printing in Sahapur, Kolaghat. Best prices with Cash on Delivery.{% endblock %}">
+    <meta property="og:url" content="{{ request.base_url }}">
+    <meta property="og:image" content="{{ request.url_root.rstrip('/') }}{{ url_for('static', filename='images/logo.jpg') }}">
+    <meta property="og:locale" content="en_IN">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Barsha Digital Gifts - Kolaghat">
+    <meta name="twitter:description" content="Personalized custom gifts, photo mugs, t-shirts, frames &amp; printing in Sahapur, Kolaghat.">
+    <meta name="twitter:image" content="{{ request.url_root.rstrip('/') }}{{ url_for('static', filename='images/logo.jpg') }}">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpeg" href="{{ url_for('static', filename='images/logo.jpg') }}">
+    
+    <!-- Schema.org JSON-LD for Google Knowledge Panel & Local Business Pack -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": ["LocalBusiness", "Store"],
+      "@id": "{{ request.url_root.rstrip('/') }}/#store",
+      "name": "Barsha Digital Gifts",
+      "alternateName": [
+        "Barsha Digital Gift", 
+        "Barsha Digital Gifts Kolaghat", 
+        "Barsha Digital Gift Sahapur",
+        "Barsha Gifts"
+      ],
+      "url": "{{ request.url_root.rstrip('/') }}",
+      "logo": "{{ request.url_root.rstrip('/') }}{{ url_for('static', filename='images/logo.jpg') }}",
+      "image": "{{ request.url_root.rstrip('/') }}{{ url_for('static', filename='images/logo.jpg') }}",
+      "description": "Barsha Digital Gifts is a premier personalized gift shop and commercial printing studio based in Sahapur, Kolaghat, Purba Medinipur, West Bengal.",
+      "telephone": "+918513010387",
+      "priceRange": "₹₹",
+      "paymentAccepted": "Cash on Delivery",
+      "currenciesAccepted": "INR",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Sahapur",
+        "addressLocality": "Kolaghat",
+        "addressRegion": "West Bengal",
+        "postalCode": "721134",
+        "addressCountry": "IN"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 22.4284,
+        "longitude": 87.8732
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+          "opens": "08:00",
+          "closes": "22:00"
+        }
+      ],
+      "contactPoint": [
+        {
+          "@type": "ContactPoint",
+          "telephone": "+918513010387",
+          "contactType": "customer service",
+          "areaServed": "IN",
+          "availableLanguage": ["English", "Bengali", "Hindi"]
+        },
+        {
+          "@type": "ContactPoint",
+          "telephone": "+919832725105",
+          "contactType": "sales",
+          "areaServed": "IN",
+          "availableLanguage": ["English", "Bengali", "Hindi"]
+        }
+      ]
+    }
+    </script>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

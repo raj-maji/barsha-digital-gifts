@@ -31,6 +31,15 @@ class BarshaDigitalGiftTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Track Your Order', response.data)
 
+        # SEO: robots.txt and sitemap.xml
+        response = self.client.get('/robots.txt')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Sitemap:', response.data)
+
+        response = self.client.get('/sitemap.xml')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'urlset', response.data)
+
     def test_02_cart_and_checkout_flow(self):
         with app.app_context():
             prod = Product.query.filter_by(slug='personalized-ceramic-coffee-mug').first()

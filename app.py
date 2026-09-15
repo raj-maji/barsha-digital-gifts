@@ -5,7 +5,7 @@ from functools import wraps
 from pathlib import Path
 from flask import (
     Flask, render_template, request, redirect, url_for,
-    flash, session, jsonify, abort, send_from_directory
+    flash, session, jsonify, abort, send_from_directory, Response
 )
 from werkzeug.utils import secure_filename
 
@@ -723,6 +723,39 @@ def track_orders():
         return redirect(url_for('user_dashboard'))
         
     return render_template('track_order.html', searched=searched, orders=orders_found, query=query)
+
+# SEO & Search Engine Crawlers
+@app.route('/robots.txt')
+def robots():
+    base_url = request.url_root.rstrip('/')
+    content = f"User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /checkout\nDisallow: /cart\nDisallow: /user\n\nSitemap: {base_url}/sitemap.xml\n"
+    return Response(content, mimetype="text/plain")
+
+@app.route('/sitemap.xml')
+def sitemap():
+    base_url = request.url_root.rstrip('/')
+    products = Product.query.filter_by(is_active=True).all()
+    categories = Category.query.all()
+    
+    xml = ['<?xml version="1.0" encoding="UTF-8"?>\n']
+    xml.append('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
+    
+    # Static public routes
+    xml.append(f'  <url><loc>{base_url}/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>\n')
+    xml.append(f'  <url><loc>{base_url}/products</loc><changefreq>daily</changefreq><priority>0.9</priority></url>\n')
+    xml.append(f'  <url><loc>{base_url}/services</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>\n')
+    xml.append(f'  <url><loc>{base_url}/track-order</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>\n')
+    
+    # Categories
+    for cat in categories:
+        xml.append(f'  <url><loc>{base_url}/products?category={cat.slug}</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>\n')
+        
+    # Products
+    for prod in products:
+        xml.append(f'  <url><loc>{base_url}/product/{prod.slug}</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>\n')
+        
+    xml.append('</urlset>')
+    return Response(''.join(xml), mimetype='application/xml')
 
 # Uploads file serving route
 @app.route('/uploads/<path:subpath>')
